@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  Techman robot tm700 launch. Wraps tm700_bringup.launch. Uses the 'limited'
+  joint range [-PI, PI] on all joints.
+  
+  Usage:
+    tm700_bringup_joint_limited.launch robot_ip:=<value>
+-->
+<launch>
+  
+  <!-- robot_ip: IP-address of the robot's socket-messaging server -->
+  <arg name="prefix" default="" />
+  <arg name="robot_ip"/>
+  <arg name="servo_time" default="0.01" />
+  <arg name="min_payload" default="0.0" />
+  <arg name="max_payload" default="5.0" />
+  
+  <!-- robot model -->
+  <!--
+  <include file="$(find tm_description)/launch/tm700_upload.launch">
+    <arg name="limited" value="true" />
+  </include>
+  -->
+  
+  <include file="$(find tm_driver_test)/launch/tm_common.launch">
+    <arg name="prefix" value="$(arg prefix)" />
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+    <arg name="servo_time" value="$(arg servo_time)" />
+    <arg name="min_payload" value="$(arg min_payload)" />
+    <arg name="max_payload" value="$(arg max_payload)" />
+  </include>
+</launch>

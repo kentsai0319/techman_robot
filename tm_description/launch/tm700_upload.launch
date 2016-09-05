@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="limited" default="false"/>
+  
+  <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot.urdf.xacro'" />
+  <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited.urdf.xacro'" />
+</launch>

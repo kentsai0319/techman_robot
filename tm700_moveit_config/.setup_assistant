@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: tm_description
+    relative_path: urdf/tm700_robot.urdf.xacro
+  SRDF:
+    relative_path: config/tm700.srdf
+  CONFIG:
+    generated_timestamp: 1464743039

@@ -1,0 +1,8 @@
+<library path="lib/libtm700_moveit_plugin">
+  <class name="tm700_kinematics/TM700KinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
+    <description>
+      Analytic kinematics for the Universal Robots TM700.
+    </description>
+  </class>
+</library>
+
