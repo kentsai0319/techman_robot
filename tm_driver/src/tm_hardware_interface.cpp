@@ -243,5 +243,4 @@ void TmHardwareInterface::doSwitch(const std::list< hardware_interface::Controll
   }
 }
 
-
 }

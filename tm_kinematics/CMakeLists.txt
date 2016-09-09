@@ -52,4 +52,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(FILES tm_moveit_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-

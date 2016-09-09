@@ -590,4 +590,3 @@ bool TmDriver::vector_match(const std::vector< double >& vec_a, const std::vecto
   }
   return true;
 }
-
