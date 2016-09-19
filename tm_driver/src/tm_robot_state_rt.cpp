@@ -78,7 +78,7 @@ bool TmRobotStateRT::getDataUpdated() {
 void TmRobotStateRT::var_update() {
   float fc;
   controller_time_sec = 0.001 * (double)controller_time_ms;
-  for(unsigned int i = 0; i < num_dof; i++) {
+  for (unsigned int i = 0; i < num_dof; i++) {
      q_act[i] = (double)(deg2rad *  q_act_deg[i]);
      q_cmd[i] = (double)(deg2rad *  q_cmd_deg[i]);
     qd_act[i] = (double)(deg2rad * qd_act_deg[i]);
@@ -86,8 +86,8 @@ void TmRobotStateRT::var_update() {
     qt_act[i] = (double)(   mm2m * qt_act_mNm[i]);
     qt_cmd[i] = (double)(   mm2m * qt_cmd_mNm[i]);
   }
-  for(unsigned int i = 0; i < 6; i++) {
-    if(i < 3) {
+  for (unsigned int i = 0; i < 6; i++) {
+    if (i < 3) {
       fc = mm2m;
     }
     else {
@@ -100,14 +100,14 @@ void TmRobotStateRT::var_update() {
      tool_vel_act[i] = (double)(fc * tool_vel_act_mmdeg[i]);
      tool_vel_cmd[i] = (double)(fc * tool_vel_cmd_mmdeg[i]);
   }
-  for(unsigned int i = 0; i < 4; i++) {
+  for (unsigned int i = 0; i < 4; i++) {
     tcp_force_est[i] = mm2m * tcp_force_est_mNm[i];
   }
-  for(unsigned int i = 0; i < 12; i++) {
+  for (unsigned int i = 0; i < 12; i++) {
     DI_bits_mb[i] = digital_input_mb & (1<<i);
     DO_bits_mb[i] = digital_output_mb & (1<<i);
   }
-  for(unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     DI_bits_ee[i] = digital_input_ee & (1<<i);
     DO_bits_ee[i] = digital_output_ee & (1<<i);
   }
@@ -121,13 +121,13 @@ int TmRobotStateRT::deSerialize_littleEndian(uint8_t* buffer) {
 
   len = 256 * (unsigned int)buffer[0] + (unsigned int)buffer[1];
   
-  if(len != pack_size) {
+  if (len != pack_size) {
     return 0;
   }
   
   var_mutex.lock();
   
-  //if(buffer[2] == 0)
+  //if (buffer[2] == 0)
   //{
   //robot data is littleEndian
   bsize = 8;
@@ -185,7 +185,7 @@ int TmRobotStateRT::deSerialize_littleEndian(uint8_t* buffer) {
   data_updated = true;
   pVar_condv->notify_all();
   
-  if(boffset != pack_size) {
+  if (boffset != pack_size) {
     return -1;
   }
   return 1;
@@ -319,15 +319,15 @@ double TmRobotStateRT::getTcpForceNorm(double& fnorm) {
 }
 void TmRobotStateRT::getKineConfig(bool& is_left_arm, bool& is_below_elbow, bool& is_down_wrist) {
   var_mutex.lock();
-  if(kine_config[0] == 1)
+  if (kine_config[0] == 1)
     is_left_arm = true;
   else
     is_left_arm = false;
-  if(kine_config[1] == 3)
+  if (kine_config[1] == 3)
     is_below_elbow = true;
   else
     is_below_elbow = false;
-  if(kine_config[2] == 5)
+  if (kine_config[2] == 5)
     is_down_wrist = true;
   else
     is_down_wrist = false;
@@ -433,7 +433,7 @@ int TmRobotStateRT::getBufEmptyFlag() {
 bool TmRobotStateRT::getError(unsigned char& err_code) {
   bool ret = false;
   var_mutex.lock();
-  if(error_code[0] != 0) {
+  if (error_code[0] != 0) {
     ret = true;
   }
   err_code = error_code[1];
@@ -444,7 +444,7 @@ bool TmRobotStateRT::getError(unsigned char& err_code, double& time_sec) {
   bool ret = false;
   var_mutex.lock();
   time_sec = controller_time_sec;
-  if(error_code[0] != 0x00) {
+  if (error_code[0] != 0x00) {
     ret = true;
   }
   err_code = error_code[1];

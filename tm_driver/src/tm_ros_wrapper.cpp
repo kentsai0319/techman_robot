@@ -93,11 +93,13 @@ protected:
   ros::NodeHandle nh_;
   
   ros::ServiceServer set_io_srv;
-  control_msgs::FollowJointTrajectoryFeedback feedback;
+  
+  //control_msgs::FollowJointTrajectoryFeedback feedback;
   control_msgs::FollowJointTrajectoryResult result;
   //action_ns: joint_trajectory_action
   actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction> as_;
   actionlib::ServerGoalHandle<control_msgs::FollowJointTrajectoryAction> goal_handle;
+  
   bool has_goal;
   
   bool use_ros_control;
@@ -157,7 +159,7 @@ public:
     
     use_ros_control = false;
     ros::param::get("~use_ros_control", use_ros_control);
-    if(use_ros_control) {
+    if (use_ros_control) {
       print_info("TM_ROS: ros_control:=True");
       hw_interface.reset(new tm_ros_control::TmHardwareInterface(nh_, robot));
       ctrl_manager.reset(new controller_manager::ControllerManager(hw_interface.get(), nh_));
@@ -179,8 +181,8 @@ public:
     ros::param::get("~max_payload", max_payload);
     print_info("TM_ROS: max_payload:= %.4f [rad/s]", max_payload);
     
-    if(robot->start()) {
-      if(use_ros_control) {
+    if (robot->start()) {
+      if (use_ros_control) {
 #ifdef USE_BOOST
 	ros_control_thread = boost::thread(boost::bind(&TmRosWrapper::rosControlLoop, this));
 #else
@@ -211,7 +213,7 @@ public:
   void halt() {
     printf("[ info] TM_ROS: halt\n");
     robot->halt();
-    if(publisher_thread_rt.joinable()) {
+    if (publisher_thread_rt.joinable()) {
       publisher_thread_rt.join();
     }
   }
@@ -222,7 +224,7 @@ private:
 		  std::vector<std::vector<double> > velocities
 		 ) {
     robot->runTraj(timestamps, positions, velocities);
-    if(has_goal) {
+    if (has_goal) {
       result.error_code = result.SUCCESSFUL;
       goal_handle.setSucceeded(result);
       has_goal = false;
@@ -231,11 +233,11 @@ private:
   }
   
   void goalCB(actionlib::ServerGoalHandle<control_msgs::FollowJointTrajectoryAction> gh) {
-    //std::string buf;
+    
     print_info("on goal");
     
     //TODO return condition
-    if(!(robot->interface->getSocketDescription() > 0)) {
+    if (!(robot->interface->getSocketDescription() > 0)) {
       result.error_code = -100;
       result.error_string = "Cannot accept new trajectories. Robot is not connected";
       gh.setRejected(result, result.error_string);
@@ -244,7 +246,7 @@ private:
     }
     
     unsigned char err;
-    if(robot->interface->stateRT->getError(err)) {
+    if (robot->interface->stateRT->getError(err)) {
       robot->setRobotRun();
       result.error_code = -100;
       result.error_string = "Cannot accept new trajectories. Robot is in error state";
@@ -253,7 +255,7 @@ private:
       return;
     }
     
-    if(has_goal) {
+    if (has_goal) {
       print_warning("Received new goal while still executing previous trajectory. Canceling previous trajectory");
       has_goal = false;
       robot->stopTraj();
@@ -273,9 +275,9 @@ private:
     
     //TODO return condition
     /*
-    if(!validateJointNames()) {
+    if (!validateJointNames()) {
       std::string joint_names_op = "";
-      for(unsigned int i = 0; i < goal.trajectory.joint_names.size(); i++) {
+      for (unsigned int i = 0; i < goal.trajectory.joint_names.size(); i++) {
 	joint_names_op += goal.trajectory.joint_names[i] + " ";
       }
       result.error_code = result.INVALID_JOINTS;
@@ -286,28 +288,28 @@ private:
     }
     */
     
-    if(!has_positions()) {
+    if (!has_positions()) {
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Received a goal without positions";
       print_error(result.error_string.c_str());
       return;
     }
     
-    if(!has_velocities()) {
+    if (!has_velocities()) {
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Received a goal without velocities";
       print_error(result.error_string.c_str());
       return;
     }
     
-    if(!has_limited_velocities()) {
+    if (!has_limited_velocities()) {
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Received a goal with velocities that are higher than " + CONVERT_TO_STRING(max_velocity);
       print_error(result.error_string.c_str());
       return;
     }
     
-    if(!traj_is_finite()) {
+    if (!traj_is_finite()) {
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Received a goal with infinities or NaNs";
       print_error(result.error_string.c_str());
@@ -316,7 +318,7 @@ private:
     
     reorder_traj_joints(goal.trajectory);
     
-    if(!start_positions_match(goal.trajectory, 0.01)) { //0.573 deg
+    if (!start_positions_match(goal.trajectory, 0.01)) { //0.573 deg
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Goal start doesn't match current pose";
       gh.setRejected(result, result.error_string);
@@ -324,7 +326,7 @@ private:
       return;
     }
     
-    if(goal.trajectory.points.size() > 60) {
+    if (goal.trajectory.points.size() > 60) {
       result.error_code = result.INVALID_GOAL;
       result.error_string = "Number of trajectory point is >60";
       gh.setRejected(result, result.error_string);
@@ -332,18 +334,18 @@ private:
       return;
     }
     
-    std::vector<double> qVec;
+    std::vector<double> q_vec;
     std::vector<double> timestamps;
     std::vector<std::vector<double> > positions, velocities;
-    if(goal.trajectory.points[0].time_from_start.toSec() != 0.0) {
+    if (goal.trajectory.points[0].time_from_start.toSec() != 0.0) {
       print_warning("Trajectory's first point should be the current position, with time_from_start set to 0.0 - Inserting point in malformed trajectory");
       timestamps.push_back(0.0);
-      robot->interface->stateRT->getQAct(qVec);
-      positions.push_back(qVec);
-      robot->interface->stateRT->getQdAct(qVec);
-      velocities.push_back(qVec);
+      robot->interface->stateRT->getQAct(q_vec);
+      positions.push_back(q_vec);
+      robot->interface->stateRT->getQdAct(q_vec);
+      velocities.push_back(q_vec);
     }
-    for(unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
+    for (unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
       timestamps.push_back(goal.trajectory.points[i].time_from_start.toSec());
       positions.push_back(goal.trajectory.points[i].positions);
       velocities.push_back(goal.trajectory.points[i].velocities);
@@ -363,8 +365,8 @@ private:
   void cancelCB(actionlib::ServerGoalHandle<control_msgs::FollowJointTrajectoryAction> gh) {
     // set the action state to preempted
     print_info("on cancel");
-    if(has_goal) {
-      if(gh == goal_handle) {
+    if (has_goal) {
+      if (gh == goal_handle) {
 	robot->stopTraj();
 	has_goal = false;
       }
@@ -379,9 +381,9 @@ private:
 		      std::vector<std::vector<double> > velocities
 		     ) {
     char msg[256];
-    if(positions[0].size() >= 6) {
+    if (positions[0].size() >= 6) {
       print_info("----");
-      for(unsigned int i = 0; i < timestamps.size(); i++) {
+      for (unsigned int i = 0; i < timestamps.size(); i++) {
 	print_info("traj_pt [%d] T: < %lf >", i, timestamps[i]);
 	snprintf(msg, 256, "traj_pt [%d] P: < %.6lf, %.6lf, %.6lf, %.6lf, %.6lf, %.6lf >",
 		 i, positions[i][0], positions[i][1], positions[i][2], positions[i][3], positions[i][4], positions[i][5]);
@@ -419,10 +421,10 @@ private:
     traj.points = new_traj;
   }
   bool start_positions_match(const trajectory_msgs::JointTrajectory &traj, double eps) {
-    std::vector<double> qActual;
-    robot->interface->stateRT->getQAct(qActual);
-    for(unsigned int i = 0; i < traj.points[0].positions.size(); i++) {
-      if(fabs(traj.points[0].positions[i] - qActual[i]) > eps) {
+    std::vector<double> q_actual;
+    robot->interface->stateRT->getQAct(q_actual);
+    for (unsigned int i = 0; i < traj.points[0].positions.size(); i++) {
+      if (fabs(traj.points[0].positions[i] - q_actual[i]) > eps) {
 	return false;
       }
     }
@@ -431,16 +433,16 @@ private:
 
   bool validateJointNames() {
     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::Goal goal = *goal_handle.getGoal();
-    if(goal.trajectory.joint_names.size() != joint_names.size())
+    if (goal.trajectory.joint_names.size() != joint_names.size())
       return false;
     
-    for(unsigned int i = 0; i < goal.trajectory.joint_names.size(); i++) {
+    for (unsigned int i = 0; i < goal.trajectory.joint_names.size(); i++) {
       unsigned int j;
-      for(j = 0; j < joint_names.size(); j++) {
-	if(goal.trajectory.joint_names[i] == joint_names[j])
+      for (j = 0; j < joint_names.size(); j++) {
+	if (goal.trajectory.joint_names[i] == joint_names[j])
 	  break;
       }
-      if(goal.trajectory.joint_names[i] == joint_names[j]) {
+      if (goal.trajectory.joint_names[i] == joint_names[j]) {
 	joint_names.erase(joint_names.begin() + j);
       }
       else {
@@ -451,27 +453,27 @@ private:
   }
   bool has_velocities() {
     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::Goal goal = *goal_handle.getGoal();
-    for(unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
-      if(goal.trajectory.points[i].positions.size() != goal.trajectory.points[i].velocities.size())
+    for (unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
+      if (goal.trajectory.points[i].positions.size() != goal.trajectory.points[i].velocities.size())
 	return false;
     }
     return true;
   }
   bool has_positions() {
     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::Goal goal = *goal_handle.getGoal();
-    if(goal.trajectory.points.size() == 0)
+    if (goal.trajectory.points.size() == 0)
       return false;
-    for(unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
-      if(goal.trajectory.points[i].positions.size() != goal.trajectory.joint_names.size())
+    for (unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
+      if (goal.trajectory.points[i].positions.size() != goal.trajectory.joint_names.size())
 	return false;
     }
     return true;
   }
   bool has_limited_velocities() {
     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::Goal goal = *goal_handle.getGoal();
-    for(unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
-      for(unsigned int j = 0; j < goal.trajectory.points[i].velocities.size(); j++) {
-	if(fabs(goal.trajectory.points[i].velocities[j]) > max_velocity)
+    for (unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
+      for (unsigned int j = 0; j < goal.trajectory.points[i].velocities.size(); j++) {
+	if (fabs(goal.trajectory.points[i].velocities[j]) > max_velocity)
 	  return false;
       }
     }
@@ -479,11 +481,11 @@ private:
   }
   bool traj_is_finite() {
     actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction>::Goal goal = *goal_handle.getGoal();
-    for(unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
-      for(unsigned int j = 0; j < goal.trajectory.points[i].velocities.size(); j++) {
-	if(!std::isfinite(goal.trajectory.points[i].positions[j]))
+    for (unsigned int i = 0; i < goal.trajectory.points.size(); i++) {
+      for (unsigned int j = 0; j < goal.trajectory.points[i].velocities.size(); j++) {
+	if (!std::isfinite(goal.trajectory.points[i].positions[j]))
 	  return false;
-	if(!std::isfinite(goal.trajectory.points[i].velocities[j]))
+	if (!std::isfinite(goal.trajectory.points[i].velocities[j]))
 	  return false;
       }
     }
@@ -496,7 +498,7 @@ private:
     ros::Duration elapsed_time;
     
     clock_gettime(CLOCK_MONOTONIC, &last_time);
-    while(ros::ok()) {
+    while (ros::ok()) {
 #ifdef USE_BOOST
       boost::mutex msg_lock;
       boost::unique_lock<boost::mutex> locker(msg_lock);
@@ -505,7 +507,7 @@ private:
       std::unique_lock<std::mutex> locker(msg_lock);
 #endif
       
-      while(!robot->interface->stateRT->getDataUpdated()) {
+      while (!robot->interface->stateRT->getDataUpdated()) {
 	msg_condv_rt.wait(locker);
       }
       clock_gettime(CLOCK_MONOTONIC, &current_time);
@@ -524,36 +526,36 @@ private:
   
   bool setIO(tm_msgs::SetIORequest& req, tm_msgs::SetIOResponse& res) {
     bool b = false, ret = false;
-    if(req.ch < 0) {
+    if (req.ch < 0) {
       res.success = ret;
       return ret;
     }
-    if(req.value != 0)
+    if (req.value != 0)
       b = true;
-    switch(req.fun) {
-      case 0://tm_msgs::SetIORequest::FUN_SET_MB_DIGITAL_OUT:
+    switch (req.fun) {
+      case 0: //tm_msgs::SetIORequest::FUN_SET_MB_DIGITAL_OUT:
 	print_info("TM_ROS: setting mb DO...");
-	if(req.ch < 12) {
+	if (req.ch < 12) {
 	  ret = robot->setDigitalOutputMB(req.ch, b);
 	}
 	break;
-      case 1://tm_msgs::SetIORequest::FUN_SET_MB_ANALOG_OUT:
-	if(req.ch < 2) {
+      case 1: //tm_msgs::SetIORequest::FUN_SET_MB_ANALOG_OUT:
+	if (req.ch < 2) {
 	}
 	break;
-      case 2://tm_msgs::SetIORequest::FUN_SET_EE_DIGITAL_OUT:
+      case 2: //tm_msgs::SetIORequest::FUN_SET_EE_DIGITAL_OUT:
 	print_info("TM_ROS: setting ee DO...");
-	if(req.ch < 4) {
+	if (req.ch < 4) {
 	  ret = robot->setDigitalOutputEE(req.ch, b);
 	}
 	break;
-      case 3://tm_msgs::SetIORequest::FUN_SET_EE_ANALOG_OUT:
-	if(req.ch < 0) {
+      case 3: //tm_msgs::SetIORequest::FUN_SET_EE_ANALOG_OUT:
+	if (req.ch < 0) {
 	}
 	break;
     }
     res.success = ret;
-    if(!ret)
+    if (!ret)
       print_warning("TM_ROS: set io failed");
     return ret;
   }
@@ -574,7 +576,7 @@ private:
     tf::Quaternion quat;
     tf::Transform transform;
       
-    while(ros::ok()) {
+    while (ros::ok()) {
       
       double robot_state_time;
       std::vector<double> robot_state_vec;
@@ -587,7 +589,7 @@ private:
       std::unique_lock<std::mutex> locker(msg_lock);
 #endif
       
-      while(!robot->interface->stateRT->getDataUpdated()) {
+      while (!robot->interface->stateRT->getDataUpdated()) {
 	msg_condv_rt.wait(locker);
       }
       
@@ -652,10 +654,10 @@ int main(int argc, char **argv) {
   std::string host;
   
   ros::init(argc, argv, "tm_driver");
-  ros::NodeHandle nh;
+  //ros::NodeHandle nh;
   
-  if(!(ros::param::get("~robot_ip_address", host))) {
-    if(argc > 1) {
+  if (!(ros::param::get("~robot_ip_address", host))) {
+    if (argc > 1) {
       host = argv[1];
     }
     else {

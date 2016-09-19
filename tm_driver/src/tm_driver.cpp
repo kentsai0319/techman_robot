@@ -57,7 +57,7 @@ rad2deg((float)57.2957795131)
 {
   char IP[64];
   char Port[64] = "6188";
-  if(robot_ip.length() < 1 || robot_ip.length() >= 64) {
+  if (robot_ip.length() < 1 || robot_ip.length() >= 64) {
     print_error("err");
     return;
   }
@@ -82,7 +82,7 @@ TmDriver::~TmDriver() {
 }
 
 bool TmDriver::start() {
-  if(!interface->start()) {
+  if (!interface->start()) {
     return false;
   }
   //show something
@@ -91,7 +91,7 @@ bool TmDriver::start() {
 
 void TmDriver::halt() {
   printf("[ info] TM_DRV: halt\n");
-  if(executing_traj){
+  if (executing_traj){
     stopTraj();
   }
   interface->halt();
@@ -113,7 +113,7 @@ int TmDriver::getRobotIndex() {
 
 bool TmDriver::setCommandData(std::string& cmd_name, char* cmd_data) {
   unsigned int n = (unsigned int)cmd_name.size() + (unsigned int)strlen(cmd_data);
-  if(n == 0 || n >= g_tmcom_max_command_size) {
+  if (n == 0 || n >= g_tmcom_max_command_size) {
     return false;
   }
   return (interface->sendCommandData(cmd_name.c_str(), cmd_data) > 0);
@@ -122,7 +122,7 @@ bool TmDriver::setCommandData(std::string& cmd_name, char* cmd_data) {
 bool TmDriver::setCommandMsg(std::string& cmd_msg) {
   unsigned int n = (unsigned int)cmd_msg.length();
   print_debug(cmd_msg.c_str());
-  if(n == 0 || n >= g_tmcom_max_command_size) {
+  if (n == 0 || n >= g_tmcom_max_command_size) {
     return false;
   }
   return (interface->sendCommandMsg(cmd_msg.c_str()) > 0);
@@ -138,17 +138,17 @@ bool TmDriver::setRobotStop() {
 
 bool TmDriver::setMoveJabs(const std::vector<double>& q, double blend) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(q.size() != dof) {
+  if (q.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "movj " + robot_ind_str;
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     //memset(var_str, 0, 16);
     snprintf(var_str, 16, "%.4f ", rad2deg * ((float)q[i]));
     cmd_msg += var_str;
   }
-  if(blend != 0) {
+  if (blend != 0) {
     //memset(var_str, 0, 16);
     snprintf(var_str, 16, "%.1f ", 100.0f * (float)blend);
     cmd_msg += var_str;
@@ -157,25 +157,25 @@ bool TmDriver::setMoveJabs(const std::vector<double>& q, double blend) {
 }
 bool TmDriver::setMoveJrel(const std::vector<double>& dq, double blend) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(dq.size() != dof) {
+  if (dq.size() != dof) {
     return false;
   }
   std::vector<double> q;
   interface->stateRT->getQAct(q);
-  for(unsigned int i = 0; i < q.size(); i++) {
+  for (unsigned int i = 0; i < q.size(); i++) {
     q[i] += dq[i];
   }
   return setMoveJabs(q, blend);
 }
 bool TmDriver::setMoveLabs(const std::vector<double>& pose, double blend) {
   float fc;
-  if(pose.size() != 6) {
+  if (pose.size() != 6) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "movl " + robot_ind_str;
-  for(unsigned int i = 0; i < 6; i++) {
-    if(i < 3)
+  for (unsigned int i = 0; i < 6; i++) {
+    if (i < 3)
       fc = m2mm;
     else
       fc = rad2deg;
@@ -183,7 +183,7 @@ bool TmDriver::setMoveLabs(const std::vector<double>& pose, double blend) {
     snprintf(var_str, 16, "%.4f ", fc * (float)pose[i]);
     cmd_msg += var_str;
   }
-  if(blend != 0) {
+  if (blend != 0) {
     //memset(var_str, 0, 16);
     snprintf(var_str, 16, "%.1f ", 100.0f * (float)blend);
     cmd_msg += var_str;
@@ -192,19 +192,19 @@ bool TmDriver::setMoveLabs(const std::vector<double>& pose, double blend) {
 }
 bool TmDriver::setMoveLrel(const std::vector<double>& dpose, double blend) {
   
-  if(dpose.size() != 6) {
+  if (dpose.size() != 6) {
     return false;
   }
   std::vector<double> pose;
   interface->stateRT->getToolPosAct(pose);
-  for(unsigned int i = 0; i < pose.size(); i++) {
+  for (unsigned int i = 0; i < pose.size(); i++) {
     pose[i] += dpose[i];
   }
   return setMoveJabs(pose, blend);
 }
 
 void TmDriver::setServoTimeval(double timeval) {
-  if(timeval < 0.001)
+  if (timeval < 0.001)
     servo_timeval = 0;
   else
     servo_timeval = (int)(timeval * 1000.0);
@@ -214,30 +214,30 @@ void TmDriver::setServoTimeval(double timeval) {
 bool TmDriver::setServoOpen(std::string type_name) {
   bool ret = false, fg = false;
   std::string cmd_msg;
-  if(type_name.compare(0, 6, "servoj") == 0) {
+  if (type_name.compare(0, 6, "servoj") == 0) {
     cmd_msg = "nrtservo " + robot_ind_str + type_name + " ";
     fg = true;
   }
-  else if(type_name.compare(0, 6, "speedj") == 0) {
+  else if (type_name.compare(0, 6, "speedj") == 0) {
     cmd_msg = "nrtservo " + robot_ind_str + type_name + " ";
     fg = true;
   }
-  if(fg) {
-    if(interface->sendCommandMsg(cmd_msg.c_str()) > 0)
+  if (fg) {
+    if (interface->sendCommandMsg(cmd_msg.c_str()) > 0)
       ret = true;
   }
   return ret;
 }
 bool TmDriver::setServoClose() {
   std::string cmd_msg = "nrtservo " + robot_ind_str + "close ";
-  if(interface->sendCommandMsg(cmd_msg.c_str()) > 0)
+  if (interface->sendCommandMsg(cmd_msg.c_str()) > 0)
     return true;
   else
     return false;
 }
 bool TmDriver::setServoStop() {
   std::string cmd_msg = "nrtservo " + robot_ind_str + "stop ";
-  if(interface->sendCommandMsg(cmd_msg.c_str()) > 0)
+  if (interface->sendCommandMsg(cmd_msg.c_str()) > 0)
     return true;
   else
     return false;
@@ -245,12 +245,12 @@ bool TmDriver::setServoStop() {
 }
 bool TmDriver::setServoj(const std::vector<double>& q) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(q.size() != dof) {
+  if (q.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "srvj " + robot_ind_str + "1 ";
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     //memset(var_str, 0, 16);
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)q[i]);
     cmd_msg += var_str;
@@ -259,12 +259,12 @@ bool TmDriver::setServoj(const std::vector<double>& q) {
 }
 bool TmDriver::setServojSpd(const std::vector<double>& qd) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(qd.size() != dof) {
+  if (qd.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "srvj " + robot_ind_str + "2 ";
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     //memset(var_str, 0, 16);
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)qd[i]);
     cmd_msg += var_str;
@@ -273,16 +273,16 @@ bool TmDriver::setServojSpd(const std::vector<double>& qd) {
 }
 bool TmDriver::setServojSrvSpd(const std::vector<double>& q, const std::vector<double>& qd) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(q.size() != dof || qd.size() != dof) {
+  if (q.size() != dof || qd.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "srvj " + robot_ind_str + "3 ";
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)q[i]);
     cmd_msg += var_str;
   }
-  for(int i = 0; i < dof; i++) {
+  for (int i = 0; i < dof; i++) {
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)qd[i]);
     cmd_msg += var_str;
   }
@@ -290,16 +290,16 @@ bool TmDriver::setServojSrvSpd(const std::vector<double>& q, const std::vector<d
 }
 bool TmDriver::setServojCubicAddPt(double time, const std::vector<double>& q, const std::vector<double>& qd) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(q.size() != dof || qd.size() != dof) {
+  if (q.size() != dof || qd.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "srvjque " + robot_ind_str + "0 ";
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)q[i]);
     cmd_msg += var_str;
   }
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     snprintf(var_str, 16, "%.4f ", rad2deg * (float)qd[i]);
     cmd_msg += var_str;
   }
@@ -313,12 +313,12 @@ bool TmDriver::setServojCubicStart() {
 }
 bool TmDriver::setSpeedj(const std::vector< double >& qd) {
   unsigned int dof = interface->stateRT->getDOF();
-  if(qd.size() != dof) {
+  if (qd.size() != dof) {
     return false;
   }
   char var_str[16];
   std::string cmd_msg = "spdj " + robot_ind_str;
-  for(unsigned int i = 0; i < dof; i++) {
+  for (unsigned int i = 0; i < dof; i++) {
     snprintf(var_str, 16, "%.4f ", rad2deg * ((float)qd[i]));
     cmd_msg += var_str;
   }
@@ -326,10 +326,10 @@ bool TmDriver::setSpeedj(const std::vector< double >& qd) {
 }
 
 bool TmDriver::setDigitalOutputMB(unsigned char ch, bool b) {
-  if(ch >= 12) return false;
+  if (ch >= 12) return false;
   std::string cmd_msg;
   int ich = ch;
-  if(b) {
+  if (b) {
     cmd_msg = "digop 0 1 " + CONVERT_TO_STRING(ich);
   }
   else {
@@ -338,10 +338,10 @@ bool TmDriver::setDigitalOutputMB(unsigned char ch, bool b) {
   return setCommandMsg(cmd_msg);
 }
 bool TmDriver::setDigitalOutputEE(unsigned char ch, bool b) {
-  if(ch >= 4) return false;
+  if (ch >= 4) return false;
   std::string cmd_msg;
   int ich = ch;
-  if(b) {
+  if (b) {
     cmd_msg = "digop " + io_ind_str + "1 " + CONVERT_TO_STRING(ich);
   }
   else {
@@ -361,7 +361,7 @@ std::vector<double> TmDriver::interp_cubic(double t, double T,
 					  ) {
   std::vector<double> pt;
   double c, d, p;
-  for(int i = 0; i < p0.size(); i++) {
+  for (int i = 0; i < p0.size(); i++) {
     //a = p0[i];
     //b = v0[i];
     c = ((3.0 * (p1[i] - p0[i]) / T) - 2.0 * v0[i] - v1[i]) / T;
@@ -376,28 +376,28 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
 		       std::vector<std::vector<double> > positions,
 		       std::vector<std::vector<double> > velocities
 		      ) {
-  //if(!setRobotRun()) return false;
+  //if (!setRobotRun()) return false;
   //THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10));
   
   bool ret = false;
   unsigned int k = 0;
   int timeval = servo_timeval;
   
-  if(timeval <= 0) {
+  if (timeval <= 0) {
     ret = true; //jog command with blending
   }
-  else if(timeval == 1) {
+  else if (timeval == 1) {
     ret = setServoOpen("servoj 3"); //cubic
   }
-  else if(timeval < 8) {
+  else if (timeval < 8) {
   }
-  else if(timeval <= 10) {
+  else if (timeval <= 10) {
     ret = setServoOpen("servoj 0"); //zero target velocity
   }
   else {
     ret = setServoOpen("servoj 1"); //non-zero target velocity
   }
-  if(!ret) return false;
+  if (!ret) return false;
   
   THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10)); //important delay
   
@@ -409,23 +409,23 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   
   ////////////////////////////////////////////////////////////
   //
-  if(timeval <= 0) //jog command with blending
+  if (timeval <= 0) //jog command with blending
   {
   ////////////////////////////////////////////////////////////
   
   double blend = 1.0;
   
   //TODO set resonable jog speed
-  while(executing_traj && k < timestamps.size()) {
-    if(k == timestamps.size() - 1) blend = 0.0;
+  while (executing_traj && k < timestamps.size()) {
+    if (k == timestamps.size() - 1) blend = 0.0;
     setMoveJabs(positions[k], blend);
     k += 1;
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10));
   }
-  while(executing_traj && (interface->stateRT->getQueCmdCount() != 0)) {
+  while (executing_traj && (interface->stateRT->getQueCmdCount() != 0)) {
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10));
   }
-  if(executing_traj) {
+  if (executing_traj) {
     executing_traj = false;
   }
   else {
@@ -437,40 +437,40 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   
   ////////////////////////////////////////////////////////////
   }
-  else if(timeval == 1) //cubic interp. by robot controller
+  else if (timeval == 1) //cubic interp. by robot controller
   {
   ////////////////////////////////////////////////////////////
   
   std::vector<double> q_vec(positions[0].size(), 0.0);
   
   THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10)); // 15 important delay
-  while(executing_traj && k < timestamps.size()) {
+  while (executing_traj && k < timestamps.size()) {
     setServojCubicAddPt(timestamps[k], positions[k], velocities[k]);
     k += 1;
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10)); // 15
-    if(executing_traj && k == timestamps.size()) {
+    if (executing_traj && k == timestamps.size()) {
       print_info(" TM_DRV: cubic interp. on robot side start...");
       setServojCubicStart();
     }
   }
   t0 = CHRONO_NS_NAME::high_resolution_clock::now();
   t = t0;
-  while(executing_traj &&
+  while (executing_traj &&
 	((1.0*timestamps[timestamps.size() - 1]) >= CHRONO_NS_NAME::duration_cast<CHRONO_NS_NAME::duration<double> >(t-t0).count())
        ) {
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(5));
     t = CHRONO_NS_NAME::high_resolution_clock::now();
   }
-  while(executing_traj &&
+  while (executing_traj &&
 	((1.1*timestamps[timestamps.size() - 1] + 0.5) >= CHRONO_NS_NAME::duration_cast<CHRONO_NS_NAME::duration<double> >(t-t0).count())
        ) {
     interface->stateRT->getQCmd(q_vec);
-    if(vector_match(positions[timestamps.size() - 1], q_vec, 0.005)) //0.287 deg
+    if (vector_match(positions[timestamps.size() - 1], q_vec, 0.005)) //0.287 deg
       break;
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(2));
     t = CHRONO_NS_NAME::high_resolution_clock::now();
   }
-  if(executing_traj) {
+  if (executing_traj) {
     executing_traj = false;
     setMoveJabs(positions[timestamps.size() - 1], 0.0);
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10));
@@ -481,7 +481,7 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   
   ////////////////////////////////////////////////////////////
   }
-  else if(timeval < 8) //cubic interp. by robot controller
+  else if (timeval < 8) //cubic interp. by robot controller
   {
   ////////////////////////////////////////////////////////////
   
@@ -489,16 +489,16 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   
   ////////////////////////////////////////////////////////////
   }
-  else if(timeval >= 8 && timeval <= 125) //(timeval >= 8) //cubic interp. here
+  else if (timeval >= 8 && timeval <= 125) //(timeval >= 8) //cubic interp. here
   {
   ////////////////////////////////////////////////////////////
   
   std::vector<double> traj_point;
   
-  while(executing_traj &&
+  while (executing_traj &&
 	(timestamps[timestamps.size() - 1] >= CHRONO_NS_NAME::duration_cast<CHRONO_NS_NAME::duration<double> >(t - t0).count())
        ) {
-    while((timestamps[k] <= CHRONO_NS_NAME::duration_cast<CHRONO_NS_NAME::duration<double> >(t - t0).count()) &&
+    while ((timestamps[k] <= CHRONO_NS_NAME::duration_cast<CHRONO_NS_NAME::duration<double> >(t - t0).count()) &&
 	  (k < timestamps.size() - 1)
 	 ) {
       k += 1;
@@ -512,7 +512,7 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(timeval));
     t = CHRONO_NS_NAME::high_resolution_clock::now();
   }
-  if(executing_traj) {
+  if (executing_traj) {
     //traj_point = positions[positions.size() - 1];
     //setServoj(traj_point);
     executing_traj = false;
@@ -530,17 +530,17 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   std::vector<bool> target_set(positions[0].size(), false);
   bool timeout = false;
   
-  while(executing_traj && k < timestamps.size()) {
+  while (executing_traj && k < timestamps.size()) {
     
     interface->stateRT->getQCmd(position_vec);
     interface->stateRT->getQdCmd(velocity_vec);
     bool position_match = vector_match( positions[k], position_vec, 0.01);
     bool velocity_match = vector_match(velocities[k], velocity_vec, 0.01);
     
-    if((position_match && velocity_match) || timeout) {
+    if ((position_match && velocity_match) || timeout) {
       k += 1;
-      if(k < timestamps.size()) {
-	if(!target_set[k]) {
+      if (k < timestamps.size()) {
+	if (!target_set[k]) {
 	  target_set[k] = false;
 	  timeout = false;
 	  setServojSrvSpd(positions[k], velocities[k]);
@@ -552,7 +552,7 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
     }
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(2));
   }
-  if(executing_traj) {
+  if (executing_traj) {
     position_vec = positions[positions.size() - 1];
     velocity_vec.assign(positions[0].size(), 0.0);
     setServojSrvSpd(position_vec, velocity_vec);
@@ -568,10 +568,10 @@ bool TmDriver::runTraj(std::vector<double> timestamps,
   //
   ////////////////////////////////////////////////////////////
   
-  if(k < timestamps.size() - 1)
+  if (k < timestamps.size() - 1)
     print_warning(" TM_DRV: k < number of traj. points");
   
-  if(timeval > 0) {
+  if (timeval > 0) {
     THIS_THREAD_NS_NAME::sleep_for(CHRONO_NS_NAME::milliseconds(10));
     setServoClose();
   }
@@ -584,8 +584,8 @@ void TmDriver::stopTraj() {
 }
 
 bool TmDriver::vector_match(const std::vector< double >& vec_a, const std::vector< double >& vec_b, double eps) {
-  for(unsigned int i = 0; i < vec_a.size(); i++) {
-    if(fabs(vec_a[i] - vec_b[i]) > eps)
+  for (unsigned int i = 0; i < vec_a.size(); i++) {
+    if (fabs(vec_a[i] - vec_b[i]) > eps)
       return false;
   }
   return true;

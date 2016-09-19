@@ -46,11 +46,11 @@ thread_alive(false)
   memset(sb_data, 0, sizeof(sb_data));
   memset(server_ip,  0, sizeof(server_ip));
   memset(server_port,0, sizeof(server_port));
-  if((strcmp(ip,"") == 0) || (strlen(ip) > sizeof(server_ip))) {
+  if ((strcmp(ip,"") == 0) || (strlen(ip) > sizeof(server_ip))) {
     print_error("TM_COM: Set IP Error!");
     return;
   }
-  if((strcmp(port,"") == 0) || (strlen(port) > sizeof(server_port))) {
+  if ((strcmp(port,"") == 0) || (strlen(port) > sizeof(server_port))) {
     print_error("TM_COM: Set Port Error!");
     return;
   }
@@ -68,7 +68,7 @@ TmCommunication::~TmCommunication() {
   //halt thread
   halt();
   //desconnet socket
-  if(sockfd != -1) {
+  if (sockfd != -1) {
     close(sockfd);
     sockfd = -1;
   }
@@ -85,7 +85,7 @@ bool TmCommunication::start() {
   //re start
   halt();
   ret = connectToServer();
-  if(ret) {
+  if (ret) {
     thread_alive = true;
 #ifdef USE_BOOST
     recv_thread = boost::thread(boost::bind(&TmCommunication::threadFunction, this));
@@ -98,7 +98,7 @@ bool TmCommunication::start() {
 
 void TmCommunication::halt() {
   thread_alive = false;
-  if(recv_thread.joinable()) {
+  if (recv_thread.joinable()) {
     recv_thread.join();
     printf("[ info] TM_COM: halt\n");
   }
@@ -110,7 +110,7 @@ int TmCommunication::sendCommandData(const char* cmd_name, const char* cmd_data)
   int ret = -1;
   size_t nsize = strlen(cmd_name);
   size_t dsize = strlen(cmd_data);
-  if(nsize + dsize > g_tmcom_max_command_size) {
+  if (nsize + dsize > g_tmcom_max_command_size) {
     return -1;
   }
   //send_data_mutex.lock();
@@ -120,7 +120,7 @@ int TmCommunication::sendCommandData(const char* cmd_name, const char* cmd_data)
   buf[3] = (char)nsize;
   memcpy(buf + 4, cmd_name, nsize);
   memcpy(buf + nsize + 4, cmd_name, dsize);
-  if(sockfd > 0)
+  if (sockfd > 0)
     ret = send(sockfd, buf, nsize + dsize + 4, 0) - 4;
   //send_data_mutex.unlock();
   return ret;
@@ -131,7 +131,7 @@ int TmCommunication::sendCommandMsg(const char* cmd_msg) {
   char buf[MAX_SENDDATA_SIZE];
   int ret = -1;
   size_t bsize = strlen(cmd_msg);
-  if(bsize > g_tmcom_max_command_size) {
+  if (bsize > g_tmcom_max_command_size) {
     return -1;
   }
   //send_msg_mutex.lock();
@@ -140,7 +140,7 @@ int TmCommunication::sendCommandMsg(const char* cmd_msg) {
   buf[2] = 0;
   buf[3] = 0;
   memcpy(buf + 4, cmd_msg, bsize);
-  if(sockfd > 0)
+  if (sockfd > 0)
     ret = send(sockfd, buf, bsize + 4, 0) - 4;
   //send_msg_mutex.unlock();
   return ret;
@@ -167,7 +167,7 @@ int TmCommunication::connectWithTimeout(int sock, const char* ip, const char* po
   FD_SET(sock, &wset);
   
   //Get Flag of Fcntl 
-  if((flags = fcntl(sock, F_GETFL, 0)) < 0 ) {
+  if ((flags = fcntl(sock, F_GETFL, 0)) < 0 ) {
 	print_warning("TM_COM: Get origin Flag of fcntl fail");
 	return -1;
   }
@@ -175,31 +175,31 @@ int TmCommunication::connectWithTimeout(int sock, const char* ip, const char* po
   print_debug("TM_COM: Origin Flag of fcntl = %d", flags);
   
   //Set O_NONBLOCK to Connect
-  if(fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+  if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
     print_warning("TM_COM: Set O_NONBLOCK to Connect Fail");
     return -1;
   }
   
-  if((ret = connect(sock, (struct sockaddr*)&serv_addr, 16)) < 0) {
-    if(errno != EINPROGRESS) {
+  if ((ret = connect(sock, (struct sockaddr*)&serv_addr, 16)) < 0) {
+    if (errno != EINPROGRESS) {
       return -1;
     }
   }
-  if(ret == 0) {
+  if (ret == 0) {
     print_info("TM_COM: Connect Immediatly OK");
   }
   else {
     //Wait for Connect OK by checking Write buffer
-    if((ret = select(sock + 1, NULL, &wset, NULL, &tv)) < 0) {
+    if ((ret = select(sock + 1, NULL, &wset, NULL, &tv)) < 0) {
       return -1;
     }
-    if(ret == 0) {
+    if (ret == 0) {
       print_warning("TM_COM: Connect Timeout");
       errno = ETIMEDOUT;
       return -1;
     }
-    if(FD_ISSET(sock, &wset)) {
-      if(getsockopt(sock, SOL_SOCKET, SO_ERROR, &error, &len_err) < 0) {
+    if (FD_ISSET(sock, &wset)) {
+      if (getsockopt(sock, SOL_SOCKET, SO_ERROR, &error, &len_err) < 0) {
 	print_error("TM_COM: Get Socketopt SO_ERROR FAIL");
 	return -1;
       }
@@ -208,7 +208,7 @@ int TmCommunication::connectWithTimeout(int sock, const char* ip, const char* po
       print_error("TM_COM: undefined socket error");
       return -1;
     }
-    if(error != 0) {
+    if (error != 0) {
       errno = error;
       print_error("TM_COM: Socket Error while connecting");
       return -1;
@@ -218,12 +218,12 @@ int TmCommunication::connectWithTimeout(int sock, const char* ip, const char* po
 
 bool TmCommunication::connectToServer() {
   //char msg[128];
-  if(sockfd > 0) {
+  if (sockfd > 0) {
     print_info("TM_COM: Already connect to TM robot");
     return true;
   }
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if(sockfd < 0) {
+  if (sockfd < 0) {
     print_error("TM_COM: ERROR opening socket");
     return false;
   }
@@ -233,14 +233,14 @@ bool TmCommunication::connectToServer() {
   setsockopt(sockfd,  SOL_SOCKET, SO_REUSEADDR, &optflag, sizeof(int));
   //snprintf(msg, 128, "TM_COM: Connecting to TM robot... IP:=%s, Port:=%s, sockfd:=%d", strServerIP, strServerPort, sockfd);
   print_info("TM_COM: Connecting to TM robot... IP:=%s, Port:=%s, sockfd:=%d", server_ip, server_port, sockfd);
-  if(connectWithTimeout(sockfd, server_ip, server_port) == 0) {
+  if (connectWithTimeout(sockfd, server_ip, server_port) == 0) {
     print_info("TM_COM: O_NONBLOCK Connect OK");
   }
   else {
     sockfd = -1;
     print_info("TM_COM: O_NONBLOCK Connect Fail"); 
   }
-  if(sockfd > 0) {
+  if (sockfd > 0) {
     //snprintf(msg, 128, "TM_COM: TM robot is Connected. sockfd:=%d", sockfd);
     print_info("TM_COM: TM robot is Connected. sockfd:=%d", sockfd);
     return true;
@@ -251,7 +251,7 @@ bool TmCommunication::connectToServer() {
 }
 
 void TmCommunication::disConnect() {
-  if(sockfd > 0) {
+  if (sockfd > 0) {
     close(sockfd);
     sockfd = -1;
     print_info("TM_COM: Connection to TM robot CLOSED");
@@ -268,19 +268,19 @@ bool TmCommunication::receiveDataToSB(char bdata[], int blen) {
   int space = 0;
   char* pchr = NULL;
   
-  if(sb_H >= sb_T) {
+  if (sb_H >= sb_T) {
     space = SB_SIZE - sb_H + sb_T - 1;
   }
   else {
     space = - sb_H + sb_T - 1;
   }
-  if(blen > space) {
+  if (blen > space) {
     //Sever send Data too Fast
     return false;
   }
   
   //append data
-  if((sb_H + blen - 1) >= SB_SIZE) {
+  if ((sb_H + blen - 1) >= SB_SIZE) {
     //printf("sb_H surpass sb size\n");
     pchr = &sb_data[sb_H];
     memcpy(pchr, bdata, blen);
@@ -297,13 +297,13 @@ bool TmCommunication::receiveDataToSB(char bdata[], int blen) {
   }
   sb_H = (sb_H + blen) % SB_SIZE;
   
-  for(;;) {
+  for (;;) {
     len_data = (SB_SIZE + sb_H - sb_T) % SB_SIZE;
-    if(len_data <= 4)
+    if (len_data <= 4)
       break;
     
     size_buf = 256 * sb_data[sb_T] + sb_data[(sb_T + 1) % SB_SIZE];
-    if(len_data < size_buf)
+    if (len_data < size_buf)
       break;
     
     //extract data
@@ -317,10 +317,10 @@ bool TmCommunication::receiveDataToSB(char bdata[], int blen) {
     //unpack stateRT data
     //size_buf = stateRT->deSerialize_littleEndian((unsigned char*)buf);
     size_buf = stateRT->deSerialize_littleEndian((unsigned char*)pchr);
-    if(size_buf == 0) {
+    if (size_buf == 0) {
       print_error("data length wrong!");
     }
-    else if(size_buf < 0) {
+    else if (size_buf < 0) {
       print_error("boffset wrong! boffset:=%d", size_buf);
     }
   }
@@ -334,7 +334,7 @@ void TmCommunication::threadFunction() {
   
   print_info("TM_COM: Recv. thread start running");
 
-  while(thread_alive) { 
+  while (thread_alive) { 
     
     fd_set masterfs, readfs;
     FD_ZERO(&masterfs);
@@ -343,38 +343,38 @@ void TmCommunication::threadFunction() {
     sb_H = 0;
     sb_T = 0;
     
-    while(thread_alive && sockfd > 0) {
+    while (thread_alive && sockfd > 0) {
       
       readfs = masterfs;
       tv.tv_sec = thread_timeval_s;
       tv.tv_usec = thread_timeval_us;
       
       rv = select(sockfd + 1, &readfs, NULL, NULL, &tv);
-      if(rv < 0) {
+      if (rv < 0) {
 	print_error("TM_COM: Socket select Error");
 	break;
       }
-      else if(rv == 0) {
+      else if (rv == 0) {
 	//timeout or no data
-	if(!thread_alive)
+	if (!thread_alive)
 	  break;
       }
-      else if(FD_ISSET(sockfd, &readfs)) {  
+      else if (FD_ISSET(sockfd, &readfs)) {  
 	
 	memset(buf, 0, MAX_RECVDATA_SIZE);
 	
 	n = recv(sockfd, buf, MAX_RECVDATA_SIZE, 0);
-	if(n < 0) {
+	if (n < 0) {
 	  print_error("TM_COM: ERROR reading from socket");
 	  break;
 	}
-	else if(n == 0) {
+	else if (n == 0) {
 	  print_warning("TM_COM: Server is shutdown, reconnection is needed");
 	  break;
 	}
 	optflag = 1;
 	setsockopt(sockfd, IPPROTO_TCP, TCP_QUICKACK, &optflag, sizeof(int));
-	if(!receiveDataToSB(buf, n)) {
+	if (!receiveDataToSB(buf, n)) {
 	  print_warning("TM_COM: Server send data too fast");
 	  break;
 	}
@@ -382,7 +382,7 @@ void TmCommunication::threadFunction() {
     }
     disConnect();
     
-    if(thread_alive) {
+    if (thread_alive) {
       print_info("TM_COM: Will try to reconnect in 5 seconds...");
 #ifdef USE_BOOST
       boost::this_thread::sleep_for(boost::chrono::seconds(5));
@@ -391,7 +391,7 @@ void TmCommunication::threadFunction() {
 #endif
     }
     //try to reconect to server
-    if(thread_alive) {
+    if (thread_alive) {
       connectToServer();
     }
   }
