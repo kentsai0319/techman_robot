@@ -8,7 +8,7 @@ This project is in development. Currently, only TM5_700 is available, there will
 
 ## Overview
 
-* Action interface on */follow\_joint\_trajectory* for seamless integration with __MoveIt__
+* Action interface on */joint\_trajectory\_action* for integration with __MoveIt__
 * Publishes robot joint state on */joint\_states*
 * Publishes TCP position on */tool\_position*
 * Publishes TCP velocity on */tool\_velocity*
