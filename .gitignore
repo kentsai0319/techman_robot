@@ -49,6 +49,9 @@ qtcreator-*
 # Catkin custom files
 CATKIN_IGNORE
 
+# kde
+.directory
+
 # Moveit default warehouse mongo db
 */default_warehouse_mongo_db
 
