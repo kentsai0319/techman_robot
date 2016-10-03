@@ -6,3 +6,10 @@
   </class>
 </library>
 
+<library path="lib/libtm900_moveit_plugin">
+  <class name="tm900_kinematics/TM900KinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
+    <description>
+      Analytic kinematics for the Universal Robots TM900.
+    </description>
+  </class>
+</library>

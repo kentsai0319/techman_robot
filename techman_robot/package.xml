@@ -41,6 +41,7 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <run_depend>tm700_moveit_config</run_depend>
+  <run_depend>tm900_moveit_config</run_depend>
   <run_depend>tm_description</run_depend>
   <run_depend>tm_driver</run_depend>
   <run_depend>tm_kinematics</run_depend>

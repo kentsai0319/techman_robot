@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<robot name="tm700" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="tm900" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- common stuff -->
   <xacro:include filename="$(find tm_description)/urdf/common.gazebo.xacro" />
   
-  <!-- tm700 -->
-  <xacro:include filename="$(find tm_description)/urdf/tm700.urdf.xacro" />
+  <!-- tm900 -->
+  <xacro:include filename="$(find tm_description)/urdf/tm900.urdf.xacro" />
 
   <!-- arm -->
   <xacro:tm700_robot prefix="" joint_limited="true"/>
