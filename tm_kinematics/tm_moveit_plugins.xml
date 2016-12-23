@@ -1,7 +1,7 @@
 <library path="lib/libtm700_moveit_plugin">
   <class name="tm700_kinematics/TM700KinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
     <description>
-      Analytic kinematics for the Universal Robots TM700.
+      Analytic kinematics for the Techman Robot TM700.
     </description>
   </class>
 </library>
@@ -9,7 +9,7 @@
 <library path="lib/libtm900_moveit_plugin">
   <class name="tm900_kinematics/TM900KinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
     <description>
-      Analytic kinematics for the Universal Robots TM900.
+      Analytic kinematics for the Techman Robot TM900.
     </description>
   </class>
 </library>
