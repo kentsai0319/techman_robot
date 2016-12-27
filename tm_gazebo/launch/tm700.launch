@@ -13,6 +13,7 @@
 
   <!-- send robot urdf to param server -->
   <include file="$(find tm_description)/launch/tm700_upload.launch">
+    <arg name="sim" default="true"/>
     <arg name="limited" value="$(arg limited)"/>
   </include>
 

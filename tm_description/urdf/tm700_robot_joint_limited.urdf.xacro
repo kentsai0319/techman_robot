@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <robot name="tm700" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- common stuff -->
-  <xacro:include filename="$(find tm_description)/urdf/common.gazebo.xacro" />
-  
   <!-- tm700 -->
   <xacro:include filename="$(find tm_description)/urdf/tm700.urdf.xacro" />
 

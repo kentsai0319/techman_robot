@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  
-  <xacro:include filename="$(find tm_description)/urdf/tm.transmission.xacro" />
-  <xacro:include filename="$(find tm_description)/urdf/tm.gazebo.xacro" />
-  
+
   <property name="pi" value="3.14159265" />
 
   <!-- Mass parameters-->
