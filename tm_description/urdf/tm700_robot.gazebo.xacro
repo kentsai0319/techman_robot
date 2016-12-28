@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <robot name="tm700" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- gazebo stuff -->
+  <xacro:property name="prefix" value="" />
+
+  <!-- Gazebo stuff -->
   <xacro:include filename="$(find tm_description)/urdf/common.gazebo.xacro" />
-  <xacro:include filename="$(find tm_description)/urdf/tm.transmission.xacro" />
   <xacro:include filename="$(find tm_description)/urdf/tm.gazebo.xacro" />
-  
+  <xacro:tm_arm_gazebo prefix="${prefix}" />
+
   <!-- tm700 -->
   <xacro:include filename="$(find tm_description)/urdf/tm700.urdf.xacro" />
 
   <!-- joint limit -->
-  <xacro:tm700_robot prefix="" joint_limited="false"/>
+  <xacro:tm700_robot prefix="${prefix}" joint_limited="false"/>
 
   <link name="world" />
 
