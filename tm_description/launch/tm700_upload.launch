@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="sim" default="true" />
+  <arg name="eih" default="false" />
   <arg name="limited" default="false"/>
 
-  <group if="$(arg sim)">
-    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot.gazebo.xacro'" />
-    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited.gazebo.xacro'" />
-  </group>
-
-  <group unless="$(arg sim)">
+  <group unless="$(arg eih)">
     <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot.urdf.xacro'" />
     <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited.urdf.xacro'" />
+  </group>
+  <group if="$(arg eih)">
+    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_eih.urdf.xacro'" />
+    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro.py '$(find tm_description)/urdf/tm700_robot_joint_limited_eih.urdf.xacro'" />
   </group>
 
 </launch>

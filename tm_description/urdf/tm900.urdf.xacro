@@ -2,8 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   
   <xacro:include filename="$(find tm_description)/urdf/tm.transmission.xacro" />
-  <xacro:include filename="$(find tm_description)/urdf/tm.gazebo.xacro" />
-  
+
   <property name="pi" value="3.14159265" />
 
   <!-- Mass parameters-->
@@ -59,7 +58,10 @@
   </xacro:macro>
 
   <xacro:macro name="tm900_robot" params="prefix joint_limited">
-    
+
+    <!-- transmission prefix -->
+    <xacro:tm_arm_transmission prefix="${prefix}" />
+
     <link name="${prefix}base_link" >
       <visual>
         <geometry>
@@ -307,12 +309,7 @@
       <child link = "${prefix}tip_link" />
       <origin xyz="0.0 0.0 ${ee_length}" rpy="0.0 0.0 0.0" />
     </joint>
-    
-    
-    <xacro:tm_arm_transmission prefix="${prefix}" />
-    <xacro:tm_arm_gazebo prefix="${prefix}" />
-    
-    
+
     <!-- ROS base to TM 'base_link' Coordinates transform -->
     <link name="${prefix}base"/>
     <joint name="${prefix}base_link-base" type="fixed">

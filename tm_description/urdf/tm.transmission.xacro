@@ -12,7 +12,7 @@
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
-  
+
     <transmission name="${prefix}shoulder_2_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${prefix}shoulder_2_joint">
@@ -22,7 +22,7 @@
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
-  
+
     <transmission name="${prefix}elbow_1_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${prefix}elbow_1_joint">
@@ -32,7 +32,7 @@
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
-  
+
     <transmission name="${prefix}wrist_1_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${prefix}wrist_1_joint">
@@ -42,7 +42,7 @@
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
-  
+
     <transmission name="${prefix}wrist_2_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${prefix}wrist_2_joint">
@@ -52,7 +52,7 @@
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
-  
+
     <transmission name="${prefix}wrist_3_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="${prefix}wrist_3_joint">

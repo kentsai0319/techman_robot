@@ -310,7 +310,7 @@
       <child link = "${prefix}tip_link" />
       <origin xyz="0.0 0.0 ${ee_length}" rpy="0.0 0.0 0.0" />
     </joint>
-    
+
     <!-- ROS base to TM 'base_link' Coordinates transform -->
     <link name="${prefix}base"/>
     <joint name="${prefix}base_link-base" type="fixed">

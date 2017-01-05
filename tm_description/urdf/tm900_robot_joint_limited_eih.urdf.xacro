@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="tm700" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="tm900" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:property name="prefix" value="" />
 
@@ -8,9 +8,9 @@
   <xacro:include filename="$(find tm_description)/urdf/tm.gazebo.xacro" />
   <xacro:tm_arm_gazebo prefix="${prefix}" />
 
-  <!-- tm700 -->
-  <xacro:include filename="$(find tm_description)/urdf/tm700.urdf.xacro" />
-  <xacro:tm700_robot prefix="${prefix}" joint_limited="true" />
+  <!-- tm900 -->
+  <xacro:include filename="$(find tm_description)/urdf/tm900.urdf.xacro" />
+  <xacro:tm900_robot prefix="${prefix}" joint_limited="true" />
 
   <link name="world" />
   <joint name="world_joint" type="fixed">
@@ -18,5 +18,9 @@
     <child link = "base_link" />
     <origin xyz="0 0 0" rpy="0 0 0" />
   </joint>
+
+  <!-- eye in hand camera-->
+  <xacro:include filename="$(find tm_description)/urdf/tm900.eih.xacro" />
+  <xacro:tm900_eih_camera prefix="${prefix}" />
 
 </robot>
