@@ -312,18 +312,18 @@
 
     <!-- ROS base to TM 'base_link' Coordinates transform -->
     <link name="${prefix}base"/>
-    <joint name="${prefix}base_link-base" type="fixed">
+    <joint name="${prefix}base-base_link" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="${prefix}base_link"/>
-      <child link="${prefix}base"/>
+      <parent link="${prefix}base"/>
+      <child link="${prefix}base_link"/>
     </joint>
     
     <!-- Frame coincident with all-zeros TCP on TM controller -->
     <link name="${prefix}tool0"/>
-    <joint name="${prefix}last_link-tool0" type="fixed">
-      <parent link="${prefix}wrist_3_link"/>
+    <joint name="${prefix}tip_link-tool0" type="fixed">
+      <parent link="${prefix}tip_link"/>
       <child link="${prefix}tool0"/>
-      <origin xyz="0.0 0.0 ${ee_length}" rpy="0.0 0.0 0.0" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
     
   </xacro:macro>

@@ -3,7 +3,7 @@
 
   <xacro:macro name="tm_arm_gazebo" params="prefix">
 
-    <gazebo reference="${prefix}ase_link">
+    <gazebo reference="${prefix}base_link">
       <selfCollide>true</selfCollide>
     </gazebo>
     <gazebo reference="${prefix}shoulder_1_link">

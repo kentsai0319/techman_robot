@@ -5,4 +5,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/tm700.srdf
   CONFIG:
-    generated_timestamp: 1464743039
+    author_name: yhtsai
+    author_email: yhtsai@yhtsai.com
+    generated_timestamp: 1483681818
