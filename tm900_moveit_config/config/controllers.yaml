@@ -1,4 +1,4 @@
- controller_list:
+controller_list:
   - name: ""
     action_ns: joint_trajectory_action
     type: FollowJointTrajectory
