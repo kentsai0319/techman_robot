@@ -370,8 +370,8 @@ namespace tm_kinematics {
 			}//for i
 		}
 		if (num_sols == 0) {
-			for (int i = 0; i < 5; i++) {
-				q_sols[i] = q_r[i];
+			for (int i = 0; i < 6; i++) {
+				q_sols[i] = q_ref[i];
 			}
 		}
 		return num_sols;
@@ -379,7 +379,7 @@ namespace tm_kinematics {
 
 	int inverse(const double* T, double* q_sols, double q6_des) {
 		//int num_sols = 0;
-		double q_r[6] = {0,-_PI_2,0,_PI_2,0,0};
+		double q_r[6] = {0,0,0,0,0,0};
 		q_r[5] = q6_des;
 		return inverse(T, q_sols, q_r);
 	}
