@@ -35,7 +35,7 @@
   <property name="tm_d6" value="0.1144" />
 
   <!-- offsets for shoulder/elbow joints -->
-  <property name="shoulder_offset" value="-0.146" />  <!-- measured from model -->
+  <property name="shoulder_offset" value="-0.1801" />  <!-- measured from model -->
   <property name="elbow_offset" value="0.1298" /> <!-- measured from model -->       
   <property name="wrist_offset" value="${-tm_d4 - elbow_offset - shoulder_offset}" />
   
