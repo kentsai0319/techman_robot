@@ -9,7 +9,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin
+  LIBRARIES tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin
   CATKIN_DEPENDS roscpp geometry_msgs moveit_core moveit_ros_planning pluginlib tf_conversions
   DEPENDS boost
 )
@@ -28,6 +28,12 @@ set_target_properties(tm700_kin PROPERTIES COMPILE_DEFINITIONS "TM700_DH_PARAMS"
 add_library(tm900_kin src/tm_kin.cpp)
 set_target_properties(tm900_kin PROPERTIES COMPILE_DEFINITIONS "TM900_DH_PARAMS")
 
+add_library(tm1100_kin src/tm_kin.cpp)
+set_target_properties(tm1100_kin PROPERTIES COMPILE_DEFINITIONS "TM1100_DH_PARAMS")
+
+add_library(tm1300_kin src/tm_kin.cpp)
+set_target_properties(tm1300_kin PROPERTIES COMPILE_DEFINITIONS "TM1300_DH_PARAMS")
+
 add_library(tm700_moveit_plugin src/tm_moveit_plugin.cpp)
 set_target_properties(tm700_moveit_plugin PROPERTIES COMPILE_DEFINITIONS "TM700_DH_PARAMS")
 target_link_libraries(tm700_moveit_plugin
@@ -42,11 +48,26 @@ target_link_libraries(tm900_moveit_plugin
   ${Boost_LIBRARIES}
   tm900_kin)
 
+add_library(tm1100_moveit_plugin src/tm_moveit_plugin.cpp)
+set_target_properties(tm1100_moveit_plugin PROPERTIES COMPILE_DEFINITIONS "TM1100_DH_PARAMS")
+target_link_libraries(tm1100_moveit_plugin
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+  tm1100_kin)
+
+add_library(tm1300_moveit_plugin src/tm_moveit_plugin.cpp)
+set_target_properties(tm1300_moveit_plugin PROPERTIES COMPILE_DEFINITIONS "TM1300_DH_PARAMS")
+target_link_libraries(tm1300_moveit_plugin
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+  tm1300_kin)
+
 #############
 ## Install ##
 #############
 
 install(TARGETS tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin
+  tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

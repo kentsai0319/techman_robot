@@ -44,7 +44,7 @@ namespace tm_kinematics {
 		const double d5 =  0.1060;
 		const double d6 =  0.1144;
 #else
-	#define TM700_DH_PARAMS
+	//#define TM700_DH_PARAMS
 	#ifdef TM700_DH_PARAMS
 		const double d1 =  0.1451;
 		const double a2 =  0.3290;
@@ -53,6 +53,22 @@ namespace tm_kinematics {
 		const double d5 =  0.1060;
 		const double d6 =  0.1144;
 	#endif
+#endif
+#ifdef TM1100_DH_PARAMS
+		const double d1 =  0.1652;
+		const double a2 =  0.5361;
+		const double a3 =  0.4579;
+		const double d4 = -0.1563;
+		const double d5 =  0.1060;
+		const double d6 =  0.11315;
+#endif
+#ifdef TM1300_DH_PARAMS
+		const double d1 =  0.1652;
+		const double a2 =  0.6361;
+		const double a3 =  0.5579;
+		const double d4 = -0.1563;
+		const double d5 =  0.1060;
+		const double d6 =  0.11315;
 #endif
 		double IkDistTOL = 0.00000001;
 		double IkAngTOL  = 0.00000001;
