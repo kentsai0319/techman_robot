@@ -32,7 +32,7 @@
   <property name="tm_a3" value="0.4579" />
   <property name="tm_d4" value="0.1563" />
   <property name="tm_d5" value="0.1060" />
-  <property name="tm_d6" value="0.1144" />
+  <property name="tm_d6" value="0.11315" />
 
   <!-- offsets for shoulder/elbow joints -->
   <property name="shoulder_offset" value="-0.1801" />  <!-- measured from model -->
@@ -45,7 +45,7 @@
   <property name="arm_2_length" value="${tm_a3}" />
   <property name="wrist_1_length" value="tm_d5}" />
   <property name="wrist_2_length" value="${tm_d5}" />
-  <property name="wrist_3_length" value="0.0565" />
+  <property name="wrist_3_length" value="0.05525" />
   <property name="ee_length" value="${tm_d6 - wrist_3_length}" />
 
   <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
