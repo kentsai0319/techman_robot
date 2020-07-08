@@ -148,6 +148,13 @@ private:
   
   uint8_t  error_code[2];
 
+  uint16_t analog_input_mb_0;
+  uint16_t analog_input_mb_1;
+  uint16_t analog_output_mb;
+  uint16_t analog_input_ee;
+  
+  uint32_t button_pressed_flag;  
+
   bool data_updated;
   
 #ifdef USE_BOOST

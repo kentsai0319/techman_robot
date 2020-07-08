@@ -49,7 +49,7 @@ deg2rad((float)0.0174532925199),
 num_max_dof(MAX_AXIS_NUM)
 {
   num_dof = 6;
-  pack_size = 372;
+  pack_size = 384;
   data_updated = false;
   pVar_condv = &var_condv;
 }
@@ -119,7 +119,9 @@ int TmRobotStateRT::deSerialize_littleEndian(uint8_t* buffer) {
   unsigned int bsize;
   unsigned int len;
 
-  len = 256 * (unsigned int)buffer[0] + (unsigned int)buffer[1];
+  len = 0;
+  len |= 0xff00 & (buffer[0] << 8);
+  len |= 0x00ff & buffer[1];
   
   if (len != pack_size) {
     return 0;
@@ -173,6 +175,14 @@ int TmRobotStateRT::deSerialize_littleEndian(uint8_t* buffer) {
   bsize = 1;
   memcpy(&error_code[0], buffer + boffset, bsize); boffset += bsize;
   memcpy(&error_code[1], buffer + boffset, bsize); boffset += bsize; //370+2 = 372
+  bsize = 2;
+  memcpy(&analog_input_mb_0, buffer + boffset, bsize); boffset += bsize;
+  memcpy(&analog_input_mb_1, buffer + boffset, bsize); boffset += bsize;
+  memcpy(&analog_output_mb, buffer + boffset, bsize); boffset += bsize;
+  memcpy(&analog_input_ee, buffer + boffset, bsize); boffset += bsize;
+  bsize = 4;
+  memcpy(&button_pressed_flag, buffer + boffset, bsize); boffset += bsize;
+
   //}
   //else {
   //robot data is bigEndian
