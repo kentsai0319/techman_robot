@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tm_kinematics)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS 
   roscpp geometry_msgs moveit_core moveit_ros_planning pluginlib tf_conversions
