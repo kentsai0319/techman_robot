@@ -58,3 +58,5 @@ CATKIN_IGNORE
 # demo pkg
 tm700_demo/
 tm700_demo_moveit_cfg/
+
+.vscode

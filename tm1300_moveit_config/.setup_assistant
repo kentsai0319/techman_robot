@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: tm_description
+    relative_path: urdf/tm900_robot.urdf.xacro
+  SRDF:
+    relative_path: config/tm900.srdf
+  CONFIG:
+    author_name: yhtsai
+    author_email: yhtsai@yhtsai.com
+    generated_timestamp: 1483684238
