@@ -302,7 +302,9 @@ bool TmCommunication::receiveDataToSB(char bdata[], int blen) {
     if (len_data <= 4)
       break;
     
-    size_buf = 256 * sb_data[sb_T] + sb_data[(sb_T + 1) % SB_SIZE];
+    size_buf = 0;
+    size_buf |= 0xff00 & (sb_data[sb_T] << 8);
+    size_buf |= 0x00ff & sb_data[(sb_T + 1) % SB_SIZE];
     if (len_data < size_buf)
       break;
     
