@@ -1,4 +1,6 @@
-#techman_robot
+# Deprecated !
+
+## techman_robot
 
 A driver provides ROS support for techman robots. TM5_700 is available for ROS Indigo.  
 
