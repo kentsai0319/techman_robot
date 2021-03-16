@@ -1,12 +1,11 @@
 # Deprecated !
 
+For driver using TMFlow, see https://github.com/TechmanRobotInc  
+see also: [tmr_ros1_dev](https://github.com/kentsai0319/tmr_ros1_dev) and [tmrlib_dev](https://github.com/kentsai0319/tmrlib_dev)  
+
 ## techman_robot
 
 A driver provides ROS support for techman robots. TM5_700 is available for ROS Indigo.  
-
-> __NOTE__:  
-This project is in development. Currently, only TM5_700 is available, there will be TM5_900 and TM10_1300 in the future. Note that we will use "tm700" to represent TM5_700 in this package.  
-
 
 ## Overview
 
