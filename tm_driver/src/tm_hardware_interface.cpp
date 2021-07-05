@@ -152,11 +152,11 @@ bool TmHardwareInterface::canSwitch(const std::list< hardware_interface::Control
        controller_it != start_list.end();
        ++controller_it
       ) {
-    if (controller_it->hardware_interface == "hardware_interface::VelocityJointInterface") {
+    if (controller_it->type == "hardware_interface::VelocityJointInterface") {
       switch(interface_flag) {
 	case velocity_interface_running: {
 	  ROS_ERROR("%s: An interface of that type (%s) is already running",
-		    controller_it->name.c_str(), controller_it->hardware_interface.c_str());
+		    controller_it->name.c_str(), controller_it->type.c_str());
 	  return false;
 	  break;
 	}
@@ -166,20 +166,20 @@ bool TmHardwareInterface::canSwitch(const std::list< hardware_interface::Control
 	       stop_controller_it != stop_list.end();
 	       ++stop_controller_it
 	      ) {
-	    if (stop_controller_it->hardware_interface == "hardware_interface::PositionJointInterface") {
+	    if (stop_controller_it->type == "hardware_interface::PositionJointInterface") {
 	      err = false;
 	      break;
 	    }
 	    if (err) {
 	      ROS_ERROR("%s (type %s) can not be run simultaneously with a PositionJointInterface",
-		    controller_it->name.c_str(), controller_it->hardware_interface.c_str());
+		    controller_it->name.c_str(), controller_it->type.c_str());
 	    }
 	  }
 	  break;
 	}
       }
     }
-    else if (controller_it->hardware_interface == "hardware_interface::PositionJointInterface") {
+    else if (controller_it->type == "hardware_interface::PositionJointInterface") {
       switch(interface_flag) {
 	case velocity_interface_running: {
 	  bool err = true;
@@ -187,20 +187,20 @@ bool TmHardwareInterface::canSwitch(const std::list< hardware_interface::Control
 	       stop_controller_it != stop_list.end();
 	       ++stop_controller_it
 	      ) {
-	    if (stop_controller_it->hardware_interface == "hardware_interface::VelocityJointInterface") {
+	    if (stop_controller_it->type == "hardware_interface::VelocityJointInterface") {
 	      err = false;
 	      break;
 	    }
 	    if (err) {
 	      ROS_ERROR("%s (type %s) can not be run simultaneously with a VelocityJointInterface",
-		    controller_it->name.c_str(), controller_it->hardware_interface.c_str());
+		    controller_it->name.c_str(), controller_it->type.c_str());
 	    }
 	  }
 	  break;
 	}
 	case position_interface_running: {
 	  ROS_ERROR("%s: An interface of that type (%s) is already running",
-		    controller_it->name.c_str(), controller_it->hardware_interface.c_str());
+		    controller_it->name.c_str(), controller_it->type.c_str());
 	  return false;
 	  break;
 	}
@@ -219,10 +219,10 @@ void TmHardwareInterface::doSwitch(const std::list< hardware_interface::Controll
        controller_it != stop_list.end();
        ++controller_it
       ) {
-    if (controller_it->hardware_interface == "hardware_interface::VelocityJointInterface") {
+    if (controller_it->type == "hardware_interface::VelocityJointInterface") {
       ROS_DEBUG("Stopping velocity interface");
     }
-    else if (controller_it->hardware_interface == "hardware_interface::PositionJointInterface") {
+    else if (controller_it->type == "hardware_interface::PositionJointInterface") {
       ROS_DEBUG("Stopping position interface");
     }
     interface_flag = no_interface_running;
@@ -232,11 +232,11 @@ void TmHardwareInterface::doSwitch(const std::list< hardware_interface::Controll
        controller_it != start_list.end();
        ++controller_it
       ) {
-    if (controller_it->hardware_interface == "hardware_interface::VelocityJointInterface") {
+    if (controller_it->type == "hardware_interface::VelocityJointInterface") {
       interface_flag = velocity_interface_running;
       robot->setServoOpen("speedj");
     }
-    else if (controller_it->hardware_interface == "hardware_interface::PositionJointInterface") {
+    else if (controller_it->type == "hardware_interface::PositionJointInterface") {
       interface_flag= position_interface_running;
       robot->setServoOpen("servoj");
     }
